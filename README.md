@@ -17,7 +17,7 @@
   - `docker build -t keystone .`
 
 - Run Docker image:
-  - `docker run -p 3000:3000 --env SESSION_SECRET=$SESSION_SECRET DATABASE_URL=$DATABASE_URL keystone`
+  - `docker run -p 3000:3000 --env SESSION_SECRET=$SESSION_SECRET --env DATABASE_URL=$DATABASE_URL keystone`
 
 # Keystone Project Starter
 
