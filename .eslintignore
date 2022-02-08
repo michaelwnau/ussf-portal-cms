@@ -25,4 +25,5 @@ coverage
 # Environment variables
 .envrc.*
 
-tsconfig.tsbuildinfo
+# Public assets
+public/

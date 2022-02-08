@@ -1,13 +1,18 @@
 # Dependency directories
-node_modules
+node_modules/
 
+.awcache
 .DS_Store
 
+# Build output
+.next
+out/
+
 # Keystone output
-.keystone/admin
-keystone.db
+/.keystone
 
 # Logs
+logs
 *.log
 npm-debug.log*
 yarn-debug.log*
@@ -22,7 +27,12 @@ coverage
 # Yarn Integrity file
 .yarn-integrity
 
-# Environment variables
-.envrc.*
+# dotenv environment variables file
+.env
+.envrc.local
 
-tsconfig.tsbuildinfo
+# Public assets
+public/
+
+# Generated files
+CHANGELOG.md
