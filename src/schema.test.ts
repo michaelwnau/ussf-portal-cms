@@ -23,7 +23,11 @@ describe('Keystone schema', () => {
           query: 'id name email',
         })
 
-        expect(user).toBeTruthy()
+        expect(user).toMatchObject({
+          id: expect.any(String),
+          name: 'Test User',
+          email: 'testuser@example.com',
+        })
       })
     })
   })
