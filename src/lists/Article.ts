@@ -1,5 +1,5 @@
 import { list } from '@keystone-6/core'
-import { select, text, timestamp } from '@keystone-6/core/fields'
+import { relationship, select, text, timestamp } from '@keystone-6/core/fields'
 import { document } from '@keystone-6/fields-document'
 
 import type { Lists } from '.keystone/types'
@@ -165,6 +165,30 @@ const Article: Lists.Article = list(
             fieldMode: () => 'read',
           },
         },
+      }),
+
+      byline: relationship({
+        ref: 'Byline',
+        ui: {
+          hideCreate: true,
+        },
+      }),
+      location: relationship({
+        ref: 'Location',
+        ui: {
+          hideCreate: true,
+        },
+      }),
+      labels: relationship({
+        ref: 'Label',
+        many: true,
+        ui: {
+          hideCreate: true,
+        },
+      }),
+      tags: relationship({
+        ref: 'Tag',
+        many: true,
       }),
     },
 
