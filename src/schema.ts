@@ -1,6 +1,3 @@
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { Lists } from '.keystone/types'
-
 import User from './lists/User'
 import Bookmark from './lists/Bookmark'
 import Collection from './lists/Collection'
@@ -12,7 +9,7 @@ import Tag from './lists/Tag'
 import Article from './lists/Article'
 import Announcement from './lists/Announcement'
 
-export const lists: Lists = {
+export const lists = {
   Event,
   User,
   Bookmark,
