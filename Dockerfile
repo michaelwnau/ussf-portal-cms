@@ -4,14 +4,19 @@ FROM node:18.13.0-bullseye-slim AS builder
 
 RUN apt-get update \
   && apt-get dist-upgrade -y \
-  && apt-get install -y --no-install-recommends libc6 yarn zlib1g
+  && apt-get install -y --no-install-recommends \
+    build-essential \
+    ca-certificates \
+    curl \
+    libc6 \
+    yarn \
+    zlib1g \
+    zlib1g-dev
 
-ADD https://www.openssl.org/source/openssl-3.0.7.tar.gz /usr/local/src/
-
-RUN echo "83049d042a260e696f62406ac5c08bf706fd84383f945cf21bd61e9ed95c396e /usr/local/src/openssl-3.0.7.tar.gz" | sha256sum --check --status
-
-RUN apt-get install -y build-essential checkinstall zlib1g-dev \
-  && cd /usr/local/src/ \
+RUN \
+  cd /usr/local/src/ \
+  && curl -SL https://www.openssl.org/source/openssl-3.0.7.tar.gz > openssl-3.0.7.tar.gz \
+  && echo "83049d042a260e696f62406ac5c08bf706fd84383f945cf21bd61e9ed95c396e /usr/local/src/openssl-3.0.7.tar.gz" | sha256sum --check --status \
   && tar -xf openssl-3.0.7.tar.gz \
   && cd openssl-3.0.7 \
   && ./config --prefix=/usr/local/ssl --openssldir=/usr/local/ssl shared zlib \
@@ -19,7 +24,8 @@ RUN apt-get install -y build-essential checkinstall zlib1g-dev \
   && make install \
   && ln -sf /usr/local/ssl/bin/openssl /usr/bin/openssl \
   && cp -v -r --preserve=links /usr/local/ssl/lib*/* /lib/*-linux-*/ \
-  && ldconfig -v
+  && ldconfig -v \
+  && rm -r /usr/local/src/openssl-3.0.7 /usr/local/src/openssl-3.0.7.tar.gz
 
 WORKDIR /app
 
