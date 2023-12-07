@@ -13,12 +13,12 @@ import { withTracking } from '../util/tracking'
 
 const User = list(
   withTracking({
-    // No one can create or delete users
-    // Admin can view & edit all users
+    // No one can delete users
+    // Admin can create, view & edit all users
     // Users can view & edit themselves
     access: {
       operation: {
-        create: () => false,
+        create: isAdmin,
         delete: () => false,
         update: () => true,
         query: () => true,
@@ -33,8 +33,8 @@ const User = list(
       labelField: 'userId',
       searchFields: ['userId'],
       description: 'Keystone users',
-      isHidden: false, // TODO - only show complete UI to admin
-      hideCreate: true,
+      isHidden: false,
+      hideCreate: (args) => !isAdmin(args.context),
       hideDelete: true,
       itemView: {
         defaultFieldMode: userItemView,
@@ -65,12 +65,7 @@ const User = list(
         isFilterable: true,
         access: {
           read: () => true,
-          update: () => false,
-        },
-        ui: {
-          itemView: {
-            fieldMode: 'read',
-          },
+          update: isAdmin,
         },
       }),
 
@@ -85,6 +80,9 @@ const User = list(
           update: () => false,
         },
         ui: {
+          createView: {
+            fieldMode: () => 'hidden',
+          },
           itemView: {
             fieldMode: () => 'read',
           },
@@ -93,14 +91,13 @@ const User = list(
 
       isEnabled: checkbox({
         isFilterable: true,
-        access: {
-          // Access can only be set using SLAM groups
-          update: () => false,
-        },
         ui: {
           itemView: {
-            fieldMode: () => 'read',
+            fieldMode: editReadAdminUI,
           },
+        },
+        access: {
+          update: isAdmin,
         },
       }),
 
@@ -137,6 +134,9 @@ const User = list(
           update: () => false,
         },
         ui: {
+          createView: {
+            fieldMode: () => 'hidden',
+          },
           itemView: {
             fieldMode: () => 'read',
           },

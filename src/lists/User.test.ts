@@ -46,6 +46,7 @@ describe('User schema', () => {
         data: {
           name: 'Test User 1 New Name',
           role: 'Author',
+          isEnabled: false,
         },
         query: 'id name role userId isAdmin isEnabled',
       })
@@ -55,6 +56,7 @@ describe('User schema', () => {
         ...testUsers[1],
         name: 'Test User 1 New Name',
         role: 'Author',
+        isEnabled: false,
       })
 
       data = await adminContext.query.User.updateOne({
@@ -62,6 +64,8 @@ describe('User schema', () => {
         data: {
           name: 'User 1',
           role: 'User',
+          isEnabled: true,
+          userId: 'updated',
         },
         query: 'id name role userId isAdmin isEnabled',
       })
@@ -70,21 +74,31 @@ describe('User schema', () => {
         id: expect.any(String),
         ...testUsers[1],
         name: 'User 1',
+        role: 'User',
+        isEnabled: true,
+        userId: 'updated',
       })
-    })
 
-    it('cannot update the userId field', async () => {
-      expect(
-        adminContext.query.User.updateOne({
-          where: { userId: 'user1@example.com' },
-          data: {
-            userId: 'testUser1',
-          },
-          query: 'id name role userId isAdmin isEnabled',
-        })
-      ).rejects.toThrow(
-        'Access denied: You cannot update that User - you cannot update the fields ["userId"]'
-      )
+      // Change userId back so we can use it in other tests
+      data = await adminContext.query.User.updateOne({
+        where: { userId: 'updated' },
+        data: {
+          name: 'User 1',
+          role: 'User',
+          isEnabled: true,
+          userId: 'user1@example.com',
+        },
+        query: 'id name role userId isAdmin isEnabled',
+      })
+
+      expect(data).toMatchObject({
+        id: expect.any(String),
+        ...testUsers[1],
+        name: 'User 1',
+        role: 'User',
+        isEnabled: true,
+        userId: 'user1@example.com',
+      })
     })
 
     it('cannot update the isAdmin field', async () => {
@@ -101,33 +115,6 @@ describe('User schema', () => {
       )
     })
 
-    it('cannot update the isEnabled field', async () => {
-      expect(
-        adminContext.query.User.updateOne({
-          where: { userId: 'user1@example.com' },
-          data: {
-            isEnabled: false,
-          },
-          query: 'id name role userId isAdmin isEnabled',
-        })
-      ).rejects.toThrow(
-        'Access denied: You cannot update that User - you cannot update the fields ["isEnabled"]'
-      )
-    })
-
-    it('cannot create users', async () => {
-      expect(
-        adminContext.query.User.createOne({
-          data: {
-            name: 'Test User 2',
-            userId: 'testUser2',
-            isAdmin: false,
-            isEnabled: true,
-          },
-        })
-      ).rejects.toThrow('Access denied: You cannot create that User')
-    })
-
     it('cannot delete users', async () => {
       expect(
         adminContext.query.User.deleteOne({
@@ -138,6 +125,26 @@ describe('User schema', () => {
       ).rejects.toThrow(
         'Access denied: You cannot delete that User - it may not exist'
       )
+    })
+
+    it('can create users', async () => {
+      const data = await adminContext.query.User.createOne({
+        data: {
+          name: 'Created By Admin',
+          userId: 'createdByAdmin',
+          isAdmin: false,
+          isEnabled: true,
+        },
+        query: 'id name role userId isAdmin isEnabled',
+      })
+
+      expect(data).toMatchObject({
+        id: expect.any(String),
+        name: 'Created By Admin',
+        userId: 'createdByAdmin',
+        isAdmin: false,
+        isEnabled: true,
+      })
     })
   })
 
